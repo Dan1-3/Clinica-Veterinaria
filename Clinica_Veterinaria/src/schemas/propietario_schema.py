@@ -1,18 +1,16 @@
 from pydantic import BaseModel
-from typing import Optional, List
 
 class PropietarioBase(BaseModel):
     nombre: str
-    apellidos: str
+    email: str
     telefono: str
     direccion: str
-    correo: str
 
 class PropietarioCreate(PropietarioBase):
     pass
 
-class PropietarioRead(PropietarioBase):
+class PropietarioResponse(PropietarioBase):
     id: int
-
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
