@@ -23,6 +23,26 @@ def create_propietario(data):
         st.error("Error al crear propietario.")
         return None
     
+# --- ANIMALES ---
+
+def get_all_animales():
+    try:
+        response = requests.get(f"{FASTAPI_URL}/animales/")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException:
+        st.error("Error al conectar con la API de Animales.")
+        return []
+
+def create_animal(data):
+    try:
+        response = requests.post(f"{FASTAPI_URL}/animales/", json=data)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError:
+        st.error("Error al crear animal.")
+        return None
+    
 # --- VETERINARIOS ---
 def get_all_veterinarios():
     try:
