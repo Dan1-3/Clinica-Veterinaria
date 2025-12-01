@@ -3,6 +3,26 @@ import requests
 import streamlit as st
 FASTAPI_URL = "http://127.0.0.1:8000"
 
+
+# --- PROPIETARIOS  ---
+def get_all_propietarios():
+    try:
+        response = requests.get(f"{FASTAPI_URL}/propietarios/")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException:
+        st.error("Error al conectar con la API de Propietarios.")
+        return []
+
+def create_propietario(data):
+    try:
+        response = requests.post(f"{FASTAPI_URL}/propietarios/", json=data)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError:
+        st.error("Error al crear propietario.")
+        return None
+    
 # --- VETERINARIOS ---
 def get_all_veterinarios():
     try:
