@@ -33,11 +33,15 @@ class Animal(Base):
 # 3. Tabla Veterinarios
 class Veterinario(Base):
     __tablename__ = "veterinarios"
+
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, nullable=False)
-    email = Column(String, unique=True)
+    apellidos = Column(String)   
+    correo = Column(String, unique=True) 
     telefono = Column(String)
+    horario = Column(String)      
     cargo = Column(String)
+    # Relaciones
     citas = relationship("Cita", back_populates="veterinario")
 
 # 4. Tabla Citas
