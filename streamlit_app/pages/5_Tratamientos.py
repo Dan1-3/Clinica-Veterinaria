@@ -12,7 +12,7 @@ lista_citas = get_all_citas()
 if not lista_citas:
     st.info("No hay citas registradas para tratar.")
 else:
-    # Creamos un selector amigable: "ID: 1 - Fecha: ... - Motivo: ..."
+    # Creamos un selector sencillo: "ID: 1 - Fecha: ... - Motivo: ..."
     opciones_citas = {f"Cita #{c['id']} | {c['fecha_hora']} | {c['motivo']}": c['id'] for c in lista_citas}
     seleccion = st.selectbox("Elige una cita para diagnosticar:", list(opciones_citas.keys()))
     
@@ -23,13 +23,13 @@ else:
         tratamiento_existente = get_tratamiento_por_cita(cita_id_seleccionada)
         
         if tratamiento_existente:
-            # --- MODO LECTURA (Ya existe) ---
+            # MODO LECTURA (Ya existe): no se puede modificar el tratamiento, solo consultarlo
             st.success("✅ Esta cita ya tiene un diagnóstico registrado.")
             st.warning(f"Diagnóstico: {tratamiento_existente['diagnostico']}")
             st.info(f"Tratamiento: {tratamiento_existente['descripcion']}")
             
         else:
-            # --- MODO ESCRITURA (Nuevo) ---
+            # MODO ESCRITURA (Nuevo), formulario para crear el tratamiento
             st.header("📝 Registrar Nuevo Diagnóstico")
             with st.form("form_tratamiento"):
                 diagnostico = st.text_area("Diagnóstico Veterinario")

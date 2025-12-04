@@ -1,3 +1,4 @@
+# Esta es la página principal de la aplicación Streamlit
 import streamlit as st
 
 # Configuración básica de la página

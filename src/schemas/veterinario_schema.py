@@ -6,7 +6,7 @@ class VeterinarioBase(BaseModel):
     correo: str
     telefono: str
     horario: str
-    cargo: str
+    cargo: str # Rol o cargo del veterinario en la clínica (eg. General, Cirujano...)
 
 class VeterinarioCreate(VeterinarioBase):
     pass
@@ -15,4 +15,4 @@ class VeterinarioRead(VeterinarioBase):
     id: int
 
     class Config:
-        from_attributes = True 
+        orm_mode = True 

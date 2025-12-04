@@ -1,5 +1,5 @@
 # Archivo principal de la aplicación FastAPI.
-# Aquí se crea la app y se conectan las rutas de cada módulo (animales, propietarios, etc.).
+# Aquí se crea la app y se conectan las rutas de cada módulo (animales, propietarios...)
 
 from fastapi import FastAPI
 from src.db.database import Base, engine

@@ -7,7 +7,7 @@ class VeterinariosService:
     # 1. CREAR (POST)
     @staticmethod
     def crear_veterinario(db: Session, datos: VeterinarioCreate):
-        # Creamos el objeto con los datos del esquema
+        # Creamos el objeto con los datos del esquema (schemas/veterinario_schema.py)
         nuevo_vet = Veterinario(
             nombre=datos.nombre,
             apellidos=datos.apellidos,
@@ -35,7 +35,7 @@ class VeterinariosService:
     # 4. ACTUALIZAR (PUT)
     @staticmethod
     def actualizar_veterinario(db: Session, veterinario_id: int, nuevos_datos: VeterinarioCreate):
-        # Buscamos al veterinario
+        # Buscamos al veterinario por su ID, para luego actualizar sus datos
         vet = db.query(Veterinario).filter(Veterinario.id == veterinario_id).first()
         
         if vet:

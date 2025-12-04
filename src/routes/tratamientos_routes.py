@@ -12,7 +12,7 @@ router = APIRouter(prefix="/tratamientos", tags=["Tratamientos"])
 def crear_tratamiento(tratamiento: TratamientoCreate, db: Session = Depends(get_db)):
     return TratamientosService.crear_tratamiento(db, tratamiento)
 
-# 2. Endpoint OBTENER POR CITA (GET)
+# 2. Endpoint OBTENER TRATAMIENTO POR CITA (GET)
 @router.get("/cita/{cita_id}", response_model=TratamientoRead)
 def obtener_tratamiento_por_cita(cita_id: int, db: Session = Depends(get_db)):
     tratamiento = TratamientosService.obtener_por_cita(db, cita_id)

@@ -5,7 +5,7 @@ from streamlit_app.backend_requests import get_all_veterinarios, create_veterina
 st.title("👨‍⚕️ Gestión de Veterinarios")
 st.markdown("---")
 
-## 1. FORMULARIO DE REGISTRO
+# 1. FORMULARIO DE REGISTRO (POST)
 with st.form("form_vet"):
     st.header("Registrar Nuevo Veterinario")
     
@@ -37,7 +37,7 @@ with st.form("form_vet"):
 
 st.markdown("---")
 
-## 2. LISTADO
+# 2. TABLA DE VETERINARIOS EXISTENTES (GET)
 st.subheader("Plantilla Actual")
 datos = get_all_veterinarios()
 if datos:

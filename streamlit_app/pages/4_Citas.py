@@ -3,22 +3,23 @@ import pandas as pd
 from datetime import datetime, time
 import requests
 
-# Configuración de página
+# Configuración de página, aqui es necesario para que funcione bien, ya que es una página independiente
+
 st.set_page_config(page_title="Gestión de Citas", page_icon="📅")
 st.title("Gestión de Citas")
 st.markdown("---")
 
-# URL del Backend
+# URL del Backend, ya que usaremos los endpoints directamente aquí
 FASTAPI_URL = "http://127.0.0.1:8000"
 
-# --- FUNCIONES DE CARGA ---
+# Cogemos datos necesarios para los selectores, creando una función genérica
 def get_data(endpoint):
     try:
         r = requests.get(f"{FASTAPI_URL}/{endpoint}/")
         return r.json() if r.status_code == 200 else []
     except: return []
 
-# 1. Cargar datos para los selectores
+# Cargar datos para los selectores
 animales = get_data("animales")
 veterinarios = get_data("veterinarios")
 
@@ -33,7 +34,7 @@ if veterinarios:
     # Mostramos: Nombre Apellido (Cargo)
     mapa_vets = {f"{v['nombre']} {v['apellidos']} ({v['cargo']})": v['id'] for v in veterinarios}
 
-# --- FORMULARIO ---
+# 1. FORMULARIO DE REGISTRO (POST)
 with st.form("form_cita"):
     st.subheader("Agendar Nueva Cita")
 
@@ -65,11 +66,11 @@ with st.form("form_cita"):
     submitted = st.form_submit_button("Guardar Cita")
 
     if submitted and sel_animal and sel_vet:
-        # Recuperamos los objetos/IDs reales
+        # Recuperamos los objetos/ID reales
         animal_obj = mapa_animales[sel_animal]
         vet_id = mapa_vets[sel_vet]
         
-        # Construimos la fecha ISO
+        # Construimos la fecha en formato ISO (YYYY-MM-DDTHH:MM:SS)
         fecha_iso = datetime.combine(fecha, hora).isoformat()
 
         payload = {
@@ -77,10 +78,11 @@ with st.form("form_cita"):
             "motivo": motivo,
             "estado": "Pendiente",
             "animal_id": animal_obj['id'],
-            "propietario_id": animal_obj['propietario_id'], # Dato automático
+            "propietario_id": animal_obj['propietario_id'], # Necesario para la cita
             "veterinario_id": vet_id
         }
         
+        # Enviamos al backend, manejando errores simples
         try:
             res = requests.post(f"{FASTAPI_URL}/citas/", json=payload)
             if res.status_code == 200:
@@ -93,7 +95,7 @@ with st.form("form_cita"):
 
 st.markdown("---")
 
-# --- LISTADO ---
+# 2. LISTADO (GET)
 st.subheader("Agenda Actual")
 citas = get_data("citas")
 if citas:

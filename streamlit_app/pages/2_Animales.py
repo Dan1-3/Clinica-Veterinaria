@@ -1,5 +1,4 @@
 # Aquí se creará la página de Streamlit para mostrar y gestionar los animales.
-# Más adelante se añadirán formularios e interacción visual.
 
 import streamlit as st
 import pandas as pd
@@ -11,16 +10,16 @@ st.markdown("---")
 # 1. OBTENER PROPIETARIOS PARA EL DESPLEGABLE
 lista_propietarios = get_all_propietarios()
 
-# Creamos un diccionario para usar en el selectbox: "Nombre (ID)" -> ID real
+# Creamos un diccionario para usar en la caja para seleccionar: "Nombre (ID)" -> ID real
 opciones_propietarios = {f"{p['nombre']} (ID: {p['id']})": p['id'] for p in lista_propietarios}
 
-# --- FORMULARIO ---
+# Formulario para crear nuevo animal
 with st.form("form_animal"):
     st.header("Registrar Mascota")
     
     # Si no hay propietarios, avisamos
     if not opciones_propietarios:
-        st.warning("⚠️ Primero debes registrar Propietarios para poder añadir mascotas.")
+        st.warning("⚠️ Primero debes registrar Propietarios para poder añadir mascotas.") 
         seleccion = None
     else:
         seleccion = st.selectbox("Selecciona al Dueño:", list(opciones_propietarios.keys()))
@@ -36,7 +35,7 @@ with st.form("form_animal"):
     submitted = st.form_submit_button("Guardar Animal")
     
     if submitted and seleccion:
-        # Recuperamos el ID real del propietario seleccionado
+        # Recuperamos el ID real del propietario seleccionado, para enviarlo al backend
         id_dueno = opciones_propietarios[seleccion]
         
         nuevo_animal = {
@@ -54,7 +53,7 @@ with st.form("form_animal"):
 
 st.markdown("---")
 
-# --- LISTADO ---
+# 2. TABLA DE ANIMALES EXISTENTES (GET)
 st.subheader("Pacientes en la Clínica")
 datos = get_all_animales()
 
