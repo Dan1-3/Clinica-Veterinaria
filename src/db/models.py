@@ -53,7 +53,7 @@ class Cita(Base):
     __tablename__ = "citas"
 
     id = Column(Integer, primary_key=True, index=True)
-    fecha_hora = Column(DateTime, default=datetime.datetime.utcnow) # <--- CORREGIDO para usar 'fecha_hora'
+    fecha_hora = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc)) # Fecha y hora de la cita, lo definimos con zona horaria UTC
     motivo = Column(String)
     estado = Column(String, default="Pendiente")
 

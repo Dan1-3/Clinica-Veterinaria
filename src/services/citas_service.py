@@ -5,7 +5,8 @@ from src.schemas.cita_schema import CitaCreate
 class CitasService:
     
     # 1. CREAR CITA
-    def crear_cita(self, db: Session, cita_data: CitaCreate):
+    @staticmethod
+    def crear_cita(db: Session, cita_data: CitaCreate):
         nueva_cita = Cita(
             fecha_hora=cita_data.fecha_hora,
             motivo=cita_data.motivo,

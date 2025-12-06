@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime # Aqui si importamos datetime para las citas, pues necesitamos que tenga fecha y hora
 
 # Clase abstracta base para las citas
@@ -20,5 +20,4 @@ class CitaRead(CitaBase):
     propietario_id: int
     veterinario_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM

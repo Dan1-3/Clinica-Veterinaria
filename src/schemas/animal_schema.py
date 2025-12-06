@@ -1,6 +1,6 @@
 # Aquí se crearán los esquemas de validación de datos con Pydantic.
 # Servirán para definir la estructura de los datos que entran y salen de la API.
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 # Esquema base para un animal, despues se usarán para crear y leer animales
 class AnimalBase(BaseModel):
@@ -17,5 +17,5 @@ class AnimalCreate(AnimalBase):
 class AnimalResponse(AnimalBase): # Esquema para leer un animal, incluye el ID
     id: int
     
-    class Config: # Configuración para que pydantic pueda trabajar con ORM (SQLAlchemy)
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM
+      

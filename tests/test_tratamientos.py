@@ -21,7 +21,7 @@ def test_crear_tratamiento_para_cita():
     
 # Creamos los datos mínimos necesarios para que exista una cita
     db.add(Propietario(id=1, nombre="P", email="p@p.com", telefono="600000000", direccion="D"))
-    db.add(Veterinario(id=1, nombre="V", email="v@v.com", telefono="600000000"))
+    db.add(Veterinario(id=1, nombre="V", correo="v@v.com", telefono="600000000"))
     db.add(Animal(id=1, nombre="A", especie="E", raza="R", edad=1, propietario_id=1))
     db.add(Cita(id=1, animal_id=1, veterinario_id=1, propietario_id=1, motivo="Dolor"))
     db.commit()

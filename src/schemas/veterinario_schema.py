@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class VeterinarioBase(BaseModel):
     nombre: str
@@ -14,5 +14,4 @@ class VeterinarioCreate(VeterinarioBase):
 class VeterinarioRead(VeterinarioBase):
     id: int
 
-    class Config:
-        orm_mode = True 
+    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM

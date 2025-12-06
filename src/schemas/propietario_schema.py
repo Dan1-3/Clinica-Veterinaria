@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class PropietarioBase(BaseModel):
     nombre: str
@@ -12,5 +12,4 @@ class PropietarioCreate(PropietarioBase):
 class PropietarioResponse(PropietarioBase):
     id: int
     
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM

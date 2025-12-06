@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class TratamientoBase(BaseModel):
     diagnostico: str # Diagnóstico asociado al tratamiento, descripción breve
@@ -10,5 +10,5 @@ class TratamientoCreate(TratamientoBase):
 
 class TratamientoRead(TratamientoBase):
     id: int
-    class Config: # Configuración para que pydantic pueda trabajar con ORM (SQLAlchemy)
-        orm_mode = True
+    
+    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM
