@@ -14,6 +14,16 @@ def get_data(endpoint):
         return r.json() if r.status_code == 200 else []
     except: return []
 
+
+
+# BLOQUEO DE SEGURIDAD
+
+if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ Acceso denegado. Por favor, inicia sesión en la página principal.")
+    st.stop()
+
+
+
 st.title("📅 Agenda de Citas")
 
 # Añadimos pestañas (tabs) para ver la agenda o crear una nueva cita 

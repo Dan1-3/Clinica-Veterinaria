@@ -2,7 +2,7 @@
 # Por ejemplo: crear, consultar, listar, actualizar y eliminar animales.
 
 from sqlalchemy.orm import Session
-from src.db.models import Animal, Cita, Tratamiento, Propietario
+from src.db.models import Animal, Cita, Tratamiento, Propietario 
 from src.schemas.animal_schema import AnimalCreate
 
 class AnimalesService:

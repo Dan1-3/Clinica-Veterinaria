@@ -5,6 +5,14 @@ import pandas as pd
 # Importamos las nuevas funciones 
 from streamlit_app.backend_requests import obtener_todos_propietarios, crear_propietario, actualizar_propietario, eliminar_propietario, obtener_ficha_propietario
 
+
+# BLOQUEO DE SEGURIDAD
+
+if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ Acceso denegado. Por favor, inicia sesión en la página principal.")
+    st.stop() # 🛑 DETIENE LA EJECUCIÓN AQUÍ
+
+
 st.title("👥 Gestión de Propietarios")
 
 # Usamos 4 pestañas para organizar, una para listar, otra para crear ,otra para editar/borrar y una para la ficha completa

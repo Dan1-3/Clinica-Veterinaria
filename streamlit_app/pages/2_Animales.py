@@ -4,6 +4,15 @@ import streamlit as st
 import pandas as pd
 from streamlit_app.backend_requests import obtener_todos_animales, crear_animal, actualizar_animal, eliminar_animal, obtener_todos_propietarios, obtener_historial_animal
 
+#  BLOQUEO DE SEGURIDAD
+
+if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ Acceso denegado. Por favor, inicia sesión en la página principal.")
+    st.stop()
+
+
+
+
 st.title("🐾 Gestión de Pacientes")
 # Definimos las pestañas para listar, crear y gestionar animales
 tab_lista, tab_ficha, tab_nuevo, tab_gestion = st.tabs(["📋 Listado", "📂 Historial Médico", "➕ Nuevo Paciente", "⚙️ Editar / Borrar"])

@@ -2,6 +2,17 @@ import streamlit as st
 import pandas as pd
 from streamlit_app.backend_requests import obtener_todos_veterinarios, crear_veterinario
 
+
+#  BLOQUEO DE SEGURIDAD
+
+if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ Acceso denegado. Por favor, inicia sesión en la página principal.")
+    st.stop()
+
+
+
+
+
 st.title("👨‍⚕️ Gestión de Veterinarios")
 tab_lista, tab_nuevo = st.tabs(["📋 Plantilla", "➕ Contratar"])
 

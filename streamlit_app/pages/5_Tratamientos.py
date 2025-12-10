@@ -3,6 +3,15 @@ from streamlit_app.backend_requests import obtener_todas_citas, obtener_tratamie
 
 # Configuración de la página
 st.set_page_config(page_title="Tratamientos", page_icon="💊")
+
+# BLOQUEO DE SEGURIDAD
+
+if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ Acceso denegado. Por favor, inicia sesión en la página principal.")
+    st.stop()
+
+
+
 st.title("💊 Diagnóstico y Tratamientos")
 
 # 1. CARGAR DATOS --> Obtener todas las citas
