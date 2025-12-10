@@ -18,6 +18,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # 5. Establecemos una dependencia para obtener la sesión de la base de datos
+# Lo hacemos con un yield para que se cierre la sesión automáticamente después de usarla (paso a paso)
 def get_db():
     db = SessionLocal()
     try:

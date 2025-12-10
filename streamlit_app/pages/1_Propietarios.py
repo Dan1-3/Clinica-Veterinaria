@@ -2,20 +2,20 @@
 
 import streamlit as st
 import pandas as pd
-# Importamos las nuevas funciones 
+# Importamos las funciones de backend para gestionar propietarios
 from streamlit_app.backend_requests import obtener_todos_propietarios, crear_propietario, actualizar_propietario, eliminar_propietario, obtener_ficha_propietario
 
 
-# BLOQUEO DE SEGURIDAD
+# BLOQUEO DE SEGURIDAD, para evitar acceso sin login
 
 if 'authenticated' not in st.session_state or not st.session_state.authenticated:
     st.warning("⚠️ Acceso denegado. Por favor, inicia sesión en la página principal.")
-    st.stop() # 🛑 DETIENE LA EJECUCIÓN AQUÍ
+    st.stop() # SE DETIENE LA EJECUCIÓN AQUÍ
 
 
 st.title("👥 Gestión de Propietarios")
 
-# Usamos 4 pestañas para organizar, una para listar, otra para crear ,otra para editar/borrar y una para la ficha completa
+# Usamos 4 pestañas para organizar el contenido, una para listar, otra para crear ,otra para editar/borrar y una para la ficha completa
 tab_lista, tab_ficha, tab_nuevo, tab_gestion = st.tabs(["📋 Listado", "📂 Ficha Completa", "➕ Nuevo Registro", "⚙️ Editar / Borrar"])
 
 # Pestaña 1: LISTADO
@@ -40,7 +40,7 @@ with tab_ficha:
         mapa_props = {f"{p['nombre']} (ID: {p['id']})": p['id'] for p in datos}
         seleccion = st.selectbox("Buscar Cliente:", list(mapa_props.keys()), index=None, placeholder="Escribe para buscar...")
         
-        if seleccion:
+        if seleccion: # Si se ha seleccionado un propietario, mostramos su ficha completa
             id_prop = mapa_props[seleccion]
             
             # LLAMADA AL NUEVO ENDPOINT
@@ -62,7 +62,7 @@ with tab_ficha:
                 if not ficha['animales']:
                     st.info("Este cliente no tiene mascotas registradas.")
                 else:
-                    # Iteramos por cada animal
+                    # Iteramos por cada animal del propietario, para mostrar su información y citas
                     for animal in ficha['animales']:
                         with st.expander(f"🐶 {animal['nombre']} ({animal['especie']} - {animal['raza']})", expanded=True):
                             c1, c2 = st.columns([1, 3])

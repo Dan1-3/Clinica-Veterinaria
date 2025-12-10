@@ -7,14 +7,14 @@ from streamlit_app.backend_requests import obtener_todos_propietarios, obtener_t
 st.set_page_config(page_title="Dashboard Clínica Veterinaria", page_icon="🏥", layout="wide")
 
 
-# SISTEMA DE LOGIN SIMULADO
+# SISTEMA DE LOGIN 
 
-# Usamos session_state para recordar si el usuario ya entró
+# Usamos session_state para recordar si el usuario ya entró, si no existe la clave, la inicializamos a False
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
 def verificar_login():
-    # Contraseña sencilla para la demo
+    # Contraseña sencilla para probar el sistema de login
     if st.session_state.password_input == "admin123":
         st.session_state.authenticated = True
     else:
@@ -28,11 +28,10 @@ if not st.session_state.authenticated:
         st.markdown("Por favor, identifíquese para acceder al panel de gestión veterinaria.")
         st.text_input("Contraseña de Acceso", type="password", key="password_input", on_change=verificar_login)
         st.info("💡 Pista para el profesor: La contraseña es **admin123**")
-    st.stop() # 🛑 AQUÍ SE DETIENE LA EJECUCIÓN SI NO HAY LOGIN
+    st.stop() # AQUÍ SE DETIENE LA EJECUCIÓN SI NO HAY LOGIN
 
 
-# 🏥 APLICACIÓN PRINCIPAL 
-
+#  APLICACIÓN PRINCIPAL 
 
 # Sidebar con botón de salir
 with st.sidebar:
@@ -42,7 +41,7 @@ with st.sidebar:
 
 st.title("🏥 Dashboard General - Clínica Veterinaria")
 
-# Cargamos los datos globales (Cacheado sería mejor, pero así es simple)
+# Cargamos los datos globales para los resúmenes y búsquedas, de manera segura y simple
 try:
     propietarios = obtener_todos_propietarios()
     animales = obtener_todos_animales()
@@ -53,7 +52,8 @@ except Exception as e:
     st.stop()
 
 
-# 🔍 BUSCADOR GLOBAL 
+# BUSCADOR GLOBAL 
+# Se encarga de buscar en propietarios, animales y veterinarios por nombre, teléfono, email, raza, cargo...
 
 st.markdown("### 🔍 Búsqueda Rápida")
 busqueda = st.text_input("Buscar...", placeholder="Escribe nombre, teléfono, email o nombre de mascota...")
@@ -79,7 +79,7 @@ if busqueda:
                     st.caption(f"ID: {p['id']}")
         else: st.caption("Sin resultados.")
 
-    # 2. PACIENTES ENCONTRADOS
+    # 2. PACIENTES(Animales) ENCONTRADOS
     with col2:
         st.markdown(f"#### 🐾 Pacientes ({len(anims)})")
         if anims:
@@ -104,13 +104,11 @@ if busqueda:
     st.markdown("---")
 
 
-# 📊 DASHBOARD 
-
-
+# DASHBOARD: Resúmenes y gráficos
 
 st.markdown("### Resumen de Actividad en Tiempo Real")
 
-# 2. MÉTRICAS PRINCIPALES
+# 1. MÉTRICAS PRINCIPALES
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -125,7 +123,7 @@ with col4:
 
 st.markdown("---")
 
-# 3. GRÁFICOS DE ACTIVIDAD
+# 2. GRÁFICOS DE ACTIVIDAD
 st.markdown("### 📊 Análisis Visual")
 col_left, col_right = st.columns(2)
 
@@ -147,7 +145,7 @@ with col_right:
         else: st.warning("Datos incompletos.")
     else: st.info("Sin datos.")
 
-# 4. ACCESOS DIRECTOS
+# 3. ACCESOS DIRECTOS
 st.markdown("### 🚀 Accesos Directos")
 c1, c2, c3 = st.columns(3)
 if c1.button("Registrar Nueva Cita"):

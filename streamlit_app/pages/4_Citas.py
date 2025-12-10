@@ -85,7 +85,7 @@ with tab_agenda:
 with tab_nueva: # Si no hay veterinarios o animales, no podemos crear citas
     animales = get_data("animales")
     
-    # Explicacion de estas lineas: Si hay animales, creamos un diccionario donde la clave es "Nombre (Especie)" y el valor es el objeto animal completo. 
+    # Si hay animales, creamos un diccionario donde la clave es "Nombre (Especie)" y el valor es el objeto animal completo. 
     # Si no hay animales, el diccionario queda vacío.
     mapa_animales = {f"{a['nombre']} ({a['especie']})": a for a in animales} if animales else {} # Mapa Nombre -> Objeto animal
     mapa_vets = {f"{v['nombre']} {v['apellidos']}": v['id'] for v in veterinarios} if veterinarios else {} # Mapa Nombre -> ID veterinario

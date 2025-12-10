@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from datetime import datetime
 
-# --- Esquemas Base ---
+# Esquema base para un propietario
 class PropietarioBase(BaseModel):
     nombre: str
     email: str

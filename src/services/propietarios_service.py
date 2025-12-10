@@ -95,7 +95,7 @@ class PropietariosService:
             return True
         return False
     
-      #  FICHA COMPLETA ---
+      #  FICHA COMPLETA DE PROPIETARIO
     @staticmethod
     def obtener_ficha_completa(db: Session, propietario_id: int):
         # 1. Obtener el propietario
@@ -103,8 +103,8 @@ class PropietariosService:
         if not propietario:
             return None
 
-        # 2. Construir la estructura manualmente (Diccionario) para asegurar compatibilidad
-        # Esto evita errores si no tienes configurados los 'relationship' en models.py
+        # 2. Construir la estructura (Diccionario) para asegurar compatibilidad
+        # Esto evita errores si no estan bien configurados los 'relationship' en models.py
         
         # Buscamos sus animales
         animales = db.query(Animal).filter(Animal.propietario_id == propietario.id).all()

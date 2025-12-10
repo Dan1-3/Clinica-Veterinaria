@@ -36,14 +36,14 @@ with tab_ficha:
     if not datos:
         st.warning("No hay pacientes registrados para consultar.")
     else:
-        # Selector de paciente: 
+        # Selector de paciente
         mapa_anim = {f"{a['nombre']} ({a['especie']})": a['id'] for a in datos}
         seleccion = st.selectbox("Buscar Paciente:", list(mapa_anim.keys()), index=None, placeholder="Escribe para buscar...", key="sel_historial")
         
         if seleccion:
             id_anim = mapa_anim[seleccion]
             
-            # Llamamos al  endpoint del backend
+            # Llamamos al  endpoint del backend, que devuelve el historial médico completo
             ficha = obtener_historial_animal(id_anim)
             
             if ficha:
@@ -66,7 +66,7 @@ with tab_ficha:
                         icono = "✅" if cita['estado'] == "Realizada" else "⏳" if cita['estado'] == "Pendiente" else "❌"
                         fecha_str = cita['fecha_hora'][:10] # Cortamos la fecha YYYY-MM-DD
                         
-                        # Usamos un expander para cada cita
+                        # Usamos un expander para cada cita, mostrando detalles e informe veterinario si existe
                         with st.expander(f"{icono} {fecha_str} - {cita['motivo']}", expanded=False):
                             col_a, col_b = st.columns([1, 2])
                             
@@ -89,7 +89,7 @@ with tab_ficha:
             else:
                 st.error("Error al cargar el historial médico.")
 
-# Tab 3: NUEVO --> Formulario para ingresar un nuevo paciente
+# Tab 3: NUEVO PACIENTE --> Formulario para ingresar un nuevo paciente
 with tab_nuevo:
     st.header("Ingreso de Paciente")
     props = obtener_todos_propietarios()

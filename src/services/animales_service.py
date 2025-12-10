@@ -1,6 +1,7 @@
 # Aquí se programarán las funciones que gestionan la lógica de los animales
 # Por ejemplo: crear, consultar, listar, actualizar y eliminar animales.
 
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from src.db.models import Animal, Cita, Tratamiento, Propietario 
 from src.schemas.animal_schema import AnimalCreate
@@ -31,8 +32,29 @@ class AnimalesService:
     @staticmethod
     def obtener_animal(db: Session, animal_id: int):
         return db.query(Animal).filter(Animal.id == animal_id).first()
+    
+    # 4. ACTUALIZAR: actualiza los datos de un animal existente por su ID
+    @staticmethod
+    def actualizar_animal(db: Session, animal_id: int, animal: AnimalCreate):
+        # 1. Buscamos el animal existente
+        db_animal = db.query(Animal).filter(Animal.id == animal_id).first()
+        
+        if not db_animal:
+            raise HTTPException(status_code=404, detail="Animal no encontrado")
+        
+        # 2. Actualizamos sus datos campo a campo
+        db_animal.nombre = animal.nombre
+        db_animal.especie = animal.especie
+        db_animal.raza = animal.raza
+        db_animal.edad = animal.edad
+        db_animal.propietario_id = animal.propietario_id
+        
+        # 3. Guardamos cambios
+        db.commit()
+        db.refresh(db_animal)
+        return db_animal
 
-    # 4. ELIMINAR: elimina un animal por su ID si existe
+    # 5. ELIMINAR: elimina un animal por su ID si existe
     @staticmethod
     def eliminar_animal(db: Session, animal_id: int):
         animal = db.query(Animal).filter(Animal.id == animal_id).first()
@@ -42,11 +64,11 @@ class AnimalesService:
             return True
         return False
     
-    # 5. FICHA CLINICA COMPLETA DEL ANIMAL
+    # 6. FICHA CLINICA COMPLETA DEL ANIMAL
     @staticmethod
     def obtener_ficha_clinica(db: Session, animal_id: int):
         # 1. Buscar Animal
-        animal = db.query(Animal).filter(Animal.id == animal_id).first()
+        animal = db.query(Animal).filter(Animal.id == animal_id).first() # buscar el animal por su ID .first para obtener uno solo (el primero que encuentre)
         if not animal: return None
         
         # 2. Buscar Nombre del Dueño (para mostrarlo en la ficha)
@@ -54,7 +76,7 @@ class AnimalesService:
         nombre_prop = prop.nombre if prop else "Desconocido"
         
         # 3. Buscar Citas (Ordenadas por fecha, la más reciente primero)
-        citas = db.query(Cita).filter(Cita.animal_id == animal.id).order_by(Cita.fecha_hora.desc()).all()
+        citas = db.query(Cita).filter(Cita.animal_id == animal.id).order_by(Cita.fecha_hora.desc()).all() # obtener todas las citas del animal, ordenadas por fecha descendente
         
         lista_citas = []
         for c in citas:

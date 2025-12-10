@@ -1,5 +1,4 @@
-# Aquí se crearán funciones o clases auxiliares para validar datos,
-# como correos electrónicos o números de teléfono.
+# Aquí se crearán funciones o clases auxiliares para validar datos, como correos electrónicos / nº de teléfono.
 
 # El objetivo es centralizar las validaciones comunes que se usan en varios servicios
 # Y asi cumplir con el principio de responsabilidad única (SRP)

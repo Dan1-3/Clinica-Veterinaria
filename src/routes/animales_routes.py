@@ -46,3 +46,11 @@ def obtener_historial_medico(animal_id: int, db: Session = Depends(get_db)):
     if not ficha:
         raise HTTPException(status_code=404, detail="Animal no encontrado")
     return ficha
+
+# 6. Endpoint ACTUALIZAR (PUT)
+@router.put("/animales/{id}", response_model=AnimalResponse)
+def actualizar_animal(id: int, animal: AnimalCreate, db: Session = Depends(get_db)):
+    try:
+        return AnimalesService.actualizar_animal(db, id, animal)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
