@@ -119,5 +119,6 @@ with tab_nueva: # Si no hay veterinarios o animales, no podemos crear citas
                     if r.status_code == 200:
                         st.success("Cita agendada")
                         st.rerun()
-                    else: st.error(r.text)
+                    else: 
+                        st.error(f"❌ Error del servidor: {r.text}")
                 except Exception as e: st.error(f"Error: {e}")

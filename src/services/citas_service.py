@@ -1,5 +1,6 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from src.db.models import Cita
+from src.db.models import Cita, Veterinario, Animal
 from src.schemas.cita_schema import CitaCreate
 
 class CitasService:
@@ -7,6 +8,12 @@ class CitasService:
     # 1. CREAR CITA
     @staticmethod
     def crear_cita(db: Session, cita_data: CitaCreate):
+        if not db.query(Animal).filter(Animal.id == cita_data.animal_id).first():
+            raise HTTPException(status_code=404, detail="El Animal no existe")
+            
+        if not db.query(Veterinario).filter(Veterinario.id == cita_data.veterinario_id).first():
+            raise HTTPException(status_code=404, detail="El Veterinario no existe")
+        
         nueva_cita = Cita(
             fecha_hora=cita_data.fecha_hora,
             motivo=cita_data.motivo,
