@@ -117,6 +117,14 @@ def obtener_todos_animales():
     except requests.exceptions.RequestException:
         st.error("No se pudieron cargar los animales.")
         return []
+    
+# Obtener historial médico de un animal (GET)
+def obtener_historial_animal(id_animal):
+    try:
+        r = requests.get(f"{URL_API}/animales/{id_animal}/historial")
+        return r.json() if r.status_code == 200 else None
+    except requests.exceptions.RequestException as e:
+        return manejar_error_conexion(e)
 
 # Crear un nuevo animal (POST)
 def crear_animal(datos):

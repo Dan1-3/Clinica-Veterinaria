@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session # manejar sesiones de base de datos
 from typing import List # definir listas en las respuestas
 
 from src.db.database import get_db # obtener la sesión (conexion) de la base de datos
-from src.schemas.animal_schema import AnimalCreate, AnimalResponse # esquemas de validación de datos
+from src.schemas.animal_schema import AnimalCreate, AnimalResponse,  AnimalFichaMedica # esquemas de validación de datos
 from src.services.animales_service import AnimalesService # funciones de negocio para animales
 
 # Definimos el router, que es un conjunto de rutas relacionadas con animales
@@ -37,3 +37,12 @@ def eliminar_animal(animal_id: int, db: Session = Depends(get_db)):
     if not resultado:
         raise HTTPException(status_code=404, detail="Animal no encontrado")
     return {"message": "Animal eliminado correctamente"}
+
+# 5. Endpoint FICHA CLINICA COMPLETA DEL ANIMAL (GET)
+
+@router.get("/{animal_id}/historial", response_model=AnimalFichaMedica)
+def obtener_historial_medico(animal_id: int, db: Session = Depends(get_db)):
+    ficha = AnimalesService.obtener_ficha_clinica(db, animal_id)
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Animal no encontrado")
+    return ficha

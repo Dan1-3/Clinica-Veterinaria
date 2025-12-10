@@ -2,11 +2,11 @@
 
 import streamlit as st
 import pandas as pd
-from streamlit_app.backend_requests import obtener_todos_animales, crear_animal, actualizar_animal, eliminar_animal, obtener_todos_propietarios
+from streamlit_app.backend_requests import obtener_todos_animales, crear_animal, actualizar_animal, eliminar_animal, obtener_todos_propietarios, obtener_historial_animal
 
 st.title("🐾 Gestión de Pacientes")
 # Definimos las pestañas para listar, crear y gestionar animales
-tab_lista, tab_nuevo, tab_gestion = st.tabs(["📋 Listado", "➕ Nuevo Paciente", "⚙️ Editar / Borrar"])
+tab_lista, tab_ficha, tab_nuevo, tab_gestion = st.tabs(["📋 Listado", "📂 Historial Médico", "➕ Nuevo Paciente", "⚙️ Editar / Borrar"])
 
 # Tab 1: LISTADO --> Mostramos todos los animales en una tabla
 with tab_lista:
@@ -17,7 +17,70 @@ with tab_lista:
     else: 
         st.info("No hay animales registrados.")
 
-# Tab 2: NUEVO --> Formulario para ingresar un nuevo paciente
+# Tab 2: FICHA --> Mostrar el historial médico completo de un animal
+
+with tab_ficha:
+    st.header("📂 Expediente Clínico")
+    st.caption("Consulta cronológica de todas las visitas y tratamientos de un paciente.")
+    
+    # Recargamos datos para asegurar que la lista está actualizada
+    if not datos:
+        st.warning("No hay pacientes registrados para consultar.")
+    else:
+        # Selector de paciente: 
+        mapa_anim = {f"{a['nombre']} ({a['especie']})": a['id'] for a in datos}
+        seleccion = st.selectbox("Buscar Paciente:", list(mapa_anim.keys()), index=None, placeholder="Escribe para buscar...", key="sel_historial")
+        
+        if seleccion:
+            id_anim = mapa_anim[seleccion]
+            
+            # Llamamos al  endpoint del backend
+            ficha = obtener_historial_animal(id_anim)
+            
+            if ficha:
+                st.markdown("---")
+                # Cabecera con datos fijos del paciente
+                c1, c2, c3, c4 = st.columns(4)
+                c1.metric("Paciente", ficha['nombre'])
+                c2.metric("Especie", ficha['especie'])
+                c3.metric("Raza", ficha['raza'])
+                c4.metric("Dueño", ficha['propietario_nombre'])
+                
+                st.subheader("📅 Historial de Visitas")
+                
+                if not ficha['citas']:
+                    st.info("Este paciente no ha venido a la clínica todavía.")
+                else:
+                    # Iteramos sobre las citas (que ya vienen ordenadas por fecha desde el backend)
+                    for cita in ficha['citas']:
+                        # Icono visual según estado
+                        icono = "✅" if cita['estado'] == "Realizada" else "⏳" if cita['estado'] == "Pendiente" else "❌"
+                        fecha_str = cita['fecha_hora'][:10] # Cortamos la fecha YYYY-MM-DD
+                        
+                        # Usamos un expander para cada cita
+                        with st.expander(f"{icono} {fecha_str} - {cita['motivo']}", expanded=False):
+                            col_a, col_b = st.columns([1, 2])
+                            
+                            with col_a:
+                                st.caption("Detalles de la Cita")
+                                st.write(f"**Hora:** {cita['fecha_hora'][11:16]}")
+                                st.write(f"**Estado:** {cita['estado']}")
+                                st.write(f"**Veterinario ID:** {cita['veterinario_id']}")
+                            
+                            with col_b:
+                                st.caption("Informe Veterinario")
+                                # Verificamos si hay tratamiento dentro de la cita
+                                if cita['tratamiento']:
+                                    st.markdown(f"**Diagnóstico:**")
+                                    st.success(f"{cita['tratamiento']['diagnostico']}")
+                                    st.markdown(f"**Tratamiento / Pauta:**")
+                                    st.info(f"{cita['tratamiento']['descripcion']}")
+                                else:
+                                    st.warning("⚠️ Sin diagnóstico registrado para esta visita.")
+            else:
+                st.error("Error al cargar el historial médico.")
+
+# Tab 3: NUEVO --> Formulario para ingresar un nuevo paciente
 with tab_nuevo:
     st.header("Ingreso de Paciente")
     props = obtener_todos_propietarios()
@@ -43,7 +106,7 @@ with tab_nuevo:
                 if crear_animal(datos_nuevos): # Llamada a la función de crear animal
                     st.success("Paciente registrado."); st.rerun()
 
-# Tab 3: GESTION --> Editar o borrar animales existentes
+# Tab 4: GESTION --> Editar o borrar animales existentes
 with tab_gestion:
     st.header("Modificar Ficha")
     if datos:
