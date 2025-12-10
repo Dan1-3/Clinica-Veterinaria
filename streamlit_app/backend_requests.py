@@ -75,6 +75,17 @@ def obtener_todos_propietarios():
     except requests.exceptions.RequestException: # Si hay error de conexión, mostramos mensaje y devolvemos lista vacía
         st.error("No se pudieron cargar los propietarios.")
         return []
+    
+# Obtener ficha completa de un propietario (GET)
+def obtener_ficha_propietario(id_propietario):
+    try:
+        # Petición al nuevo endpoint que agrupa todos los datos
+        respuesta = requests.get(f"{URL_API}/propietarios/{id_propietario}/ficha")
+        if respuesta.status_code == 200:
+            return respuesta.json()
+        return None
+    except requests.exceptions.RequestException as e:
+        return manejar_error_conexion(e)
 
 # Crear un nuevo propietario (POST)
 def crear_propietario(datos):

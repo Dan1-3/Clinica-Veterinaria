@@ -3,12 +3,12 @@
 import streamlit as st
 import pandas as pd
 # Importamos las nuevas funciones 
-from streamlit_app.backend_requests import obtener_todos_propietarios, crear_propietario, actualizar_propietario, eliminar_propietario
+from streamlit_app.backend_requests import obtener_todos_propietarios, crear_propietario, actualizar_propietario, eliminar_propietario, obtener_ficha_propietario
 
 st.title("👥 Gestión de Propietarios")
 
-# Usamos 3 pestañas para organizar, una para listar, otra para crear y otra para editar/borrar
-tab_lista, tab_nuevo, tab_gestion = st.tabs(["📋 Listado", "➕ Nuevo Registro", "⚙️ Editar / Borrar"])
+# Usamos 4 pestañas para organizar, una para listar, otra para crear ,otra para editar/borrar y una para la ficha completa
+tab_lista, tab_ficha, tab_nuevo, tab_gestion = st.tabs(["📋 Listado", "📂 Ficha Completa", "➕ Nuevo Registro", "⚙️ Editar / Borrar"])
 
 # Pestaña 1: LISTADO
 with tab_lista:
@@ -20,7 +20,72 @@ with tab_lista:
     else: # Si no hay datos, mostramos un mensaje informativo
         st.info("No hay propietarios registrados todavía.")
 
-# Pestaña 2: NUEVO REGISTRO DE PROPIETARIO
+# Pestaña 2: FICHA COMPLETA
+with tab_ficha:
+    st.header("📂 Expediente Digital del Cliente")
+    st.caption("Consulta todos los animales y el historial de citas de un propietario.")
+    
+    if not datos:
+        st.warning("No hay clientes para mostrar.")
+    else:
+        # Selector de cliente
+        mapa_props = {f"{p['nombre']} (ID: {p['id']})": p['id'] for p in datos}
+        seleccion = st.selectbox("Buscar Cliente:", list(mapa_props.keys()), index=None, placeholder="Escribe para buscar...")
+        
+        if seleccion:
+            id_prop = mapa_props[seleccion]
+            
+            # LLAMADA AL NUEVO ENDPOINT
+            ficha = obtener_ficha_propietario(id_prop)
+            
+            if ficha:
+                # Encabezado del Cliente
+                st.markdown("---")
+                col_info1, col_info2 = st.columns(2)
+                with col_info1:
+                    st.markdown(f"### 👤 {ficha['nombre']}")
+                    st.write(f"📍 **Dirección:** {ficha['direccion']}")
+                with col_info2:
+                    st.write(f"📧 **Email:** {ficha['email']}")
+                    st.write(f"📱 **Teléfono:** {ficha['telefono']}")
+                
+                st.markdown("### 🐾 Mascotas y Citas")
+                
+                if not ficha['animales']:
+                    st.info("Este cliente no tiene mascotas registradas.")
+                else:
+                    # Iteramos por cada animal
+                    for animal in ficha['animales']:
+                        with st.expander(f"🐶 {animal['nombre']} ({animal['especie']} - {animal['raza']})", expanded=True):
+                            c1, c2 = st.columns([1, 3])
+                            with c1:
+                                st.success(f"**Edad:** {animal['edad']} años")
+                                st.write(f"**ID Paciente:** {animal['id']}")
+                            
+                            with c2:
+                                if not animal['citas']:
+                                    st.caption("🚫 Sin historial de citas.")
+                                else:
+                                    st.write("**Historial de Visitas:**")
+                                    # Convertimos las citas a tabla
+                                    df_citas = pd.DataFrame(animal['citas'])
+                                    # Formateamos fecha
+                                    df_citas['fecha_hora'] = pd.to_datetime(df_citas['fecha_hora']).dt.strftime('%d/%m/%Y %H:%M')
+                                    
+                                    st.dataframe(
+                                        df_citas[['fecha_hora', 'motivo', 'estado']],
+                                        column_config={
+                                            "fecha_hora": "Fecha",
+                                            "motivo": "Motivo Visita",
+                                            "estado": st.column_config.TextColumn("Estado", help="Pendiente, Realizada...")
+                                        },
+                                        use_container_width=True,
+                                        hide_index=True
+                                    )
+            else:
+                st.error("Error al cargar la ficha del cliente.")
+
+# Pestaña 3: NUEVO REGISTRO DE PROPIETARIO
 with tab_nuevo:
     st.header("Registrar Nuevo Dueño")
     with st.form("form_nuevo_propietario"): # Formulario para crear un nuevo propietario
@@ -47,7 +112,7 @@ with tab_nuevo:
                 st.success(f"¡Propietario '{nombre}' registrado con éxito!")
                 st.rerun()
 
-# Pestaña 3: GESTION PROPIETARIO (EDITAR / BORRAR)
+# Pestaña 4: GESTION PROPIETARIO (EDITAR / BORRAR)
 with tab_gestion:
     st.header("Modificar Datos")
     

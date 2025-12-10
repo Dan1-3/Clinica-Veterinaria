@@ -5,7 +5,7 @@ import logging
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from src.db.models import Propietario
+from src.db.models import Propietario, Animal, Cita
 from src.schemas.propietario_schema import PropietarioCreate
 from src.utils.validators import EmailValidator, TelefonoValidator
 
@@ -94,3 +94,43 @@ class PropietariosService:
             db.commit()
             return True
         return False
+    
+      #  FICHA COMPLETA ---
+    @staticmethod
+    def obtener_ficha_completa(db: Session, propietario_id: int):
+        # 1. Obtener el propietario
+        propietario = db.query(Propietario).filter(Propietario.id == propietario_id).first()
+        if not propietario:
+            return None
+
+        # 2. Construir la estructura manualmente (Diccionario) para asegurar compatibilidad
+        # Esto evita errores si no tienes configurados los 'relationship' en models.py
+        
+        # Buscamos sus animales
+        animales = db.query(Animal).filter(Animal.propietario_id == propietario.id).all()
+        
+        lista_animales = []
+        for animal in animales:
+            # Por cada animal, buscamos sus citas
+            citas = db.query(Cita).filter(Cita.animal_id == animal.id).all()
+            
+            # Formateamos animal con sus citas
+            datos_animal = {
+                "id": animal.id,
+                "nombre": animal.nombre,
+                "especie": animal.especie,
+                "raza": animal.raza,
+                "edad": animal.edad,
+                "citas": citas # SQLAlchemy devolverá la lista de objetos Cita
+            }
+            lista_animales.append(datos_animal)
+
+        # Retornamos el objeto padre con la lista anidada
+        return {
+            "id": propietario.id,
+            "nombre": propietario.nombre,
+            "email": propietario.email,
+            "telefono": propietario.telefono,
+            "direccion": propietario.direccion,
+            "animales": lista_animales
+        }

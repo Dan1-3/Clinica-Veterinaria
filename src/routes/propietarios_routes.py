@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from src.db.database import get_db
-from src.schemas.propietario_schema import PropietarioCreate, PropietarioResponse
+from src.schemas.propietario_schema import PropietarioCreate, PropietarioResponse, PropietarioFichaCompleta
 from src.services.propietarios_service import PropietariosService
 
 # Definimos el router
@@ -42,3 +42,12 @@ def eliminar_propietario(propietario_id: int, db: Session = Depends(get_db)):
     if not resultado:
         raise HTTPException(status_code=404, detail="Propietario no encontrado")
     return {"message": "Propietario eliminado correctamente"}
+
+# 6. FICHA COMPLETA DE PROPIETARIO (NUEVO ENDPOINT)
+
+@router.get("/{propietario_id}/ficha", response_model=PropietarioFichaCompleta)
+def obtener_ficha_tecnica(propietario_id: int, db: Session = Depends(get_db)):
+    ficha = PropietariosService.obtener_ficha_completa(db, propietario_id)
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Propietario no encontrado")
+    return ficha
