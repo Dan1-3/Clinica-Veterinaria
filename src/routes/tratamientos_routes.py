@@ -19,3 +19,14 @@ def obtener_tratamiento_por_cita(cita_id: int, db: Session = Depends(get_db)):
     if not tratamiento:
         raise HTTPException(status_code=404, detail="No existe tratamiento para esta cita")
     return tratamiento
+
+# 3. Endpoint ELIMINAR TRATAMIENTO (DELETE)
+@router.delete("/{tratamiento_id}")
+def eliminar_tratamiento(tratamiento_id: int, db: Session = Depends(get_db)):
+    try:
+        # Llamamos al servicio
+        return TratamientosService.eliminar_tratamiento(db, tratamiento_id)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

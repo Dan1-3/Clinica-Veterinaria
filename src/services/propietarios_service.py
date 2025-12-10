@@ -89,11 +89,13 @@ class PropietariosService:
     @staticmethod
     def eliminar_propietario(db: Session, propietario_id: int):
         propietario = db.query(Propietario).filter(Propietario.id == propietario_id).first()
-        if propietario:
-            db.delete(propietario)
-            db.commit()
-            return True
-        return False
+        
+        if not propietario:
+            raise HTTPException(status_code=404, detail="Propietario no encontrado")
+    
+        db.delete(propietario)
+        db.commit()
+        return True
     
       #  FICHA COMPLETA DE PROPIETARIO
     @staticmethod

@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from src.db.models import Tratamiento
 from src.schemas.tratamiento_schema import TratamientoCreate
@@ -21,3 +22,19 @@ class TratamientosService:
     @staticmethod
     def obtener_por_cita(db: Session, cita_id: int):
         return db.query(Tratamiento).filter(Tratamiento.cita_id == cita_id).first()
+    
+    # 4. ELIMINAR TRATAMIENTO
+
+    @staticmethod
+    def eliminar_tratamiento(db: Session, tratamiento_id: int):
+        # 1. Buscamos el tratamiento
+        tratamiento = db.query(Tratamiento).filter(Tratamiento.id == tratamiento_id).first()
+        
+        if not tratamiento:
+            # Si no existe, lanzamos el error 404 
+            raise HTTPException(status_code=404, detail="Tratamiento no encontrado")
+        
+        # 2. Lo borramos
+        db.delete(tratamiento)
+        db.commit()
+        return True

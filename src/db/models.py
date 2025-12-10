@@ -19,8 +19,7 @@ class Propietario(Base):
     telefono = Column(String)
     direccion = Column(String)
     # Relación: Un dueño tiene muchas mascotas
-    animales = relationship("Animal", back_populates="propietario") # sirve para acceder a las mascotas del dueño
-
+    animales = relationship("Animal", back_populates="propietario", cascade="all, delete-orphan") # Cuando se borra un propietario, se borran sus animales también, pero no todos los registrados
 # 2. Tabla Animales
 class Animal(Base):
     __tablename__ = "animales"
