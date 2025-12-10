@@ -56,51 +56,52 @@ except Exception as e:
 # 🔍 BUSCADOR GLOBAL 
 
 st.markdown("### 🔍 Búsqueda Rápida")
-busqueda = st.text_input("Buscar cliente o paciente...", placeholder="Escribe nombre, teléfono, email o nombre de mascota...")
+busqueda = st.text_input("Buscar...", placeholder="Escribe nombre, teléfono, email o nombre de mascota...")
 
 if busqueda:
     st.info(f"Resultados para: **'{busqueda}'**")
     
-    # 1. Buscar en Propietarios
-    props_encontrados = [
-        p for p in propietarios 
-        if busqueda.lower() in p['nombre'].lower() 
-        or busqueda in p['telefono'] 
-        or busqueda.lower() in p['email'].lower()
-    ]
-    
-    # 2. Buscar en Animales
-    anims_encontrados = [
-        a for a in animales 
-        if busqueda.lower() in a['nombre'].lower() 
-        or busqueda.lower() in a['raza'].lower()
-    ]
+    # Filtros
+    props = [p for p in propietarios if busqueda.lower() in p['nombre'].lower() or busqueda in p['telefono'] or busqueda.lower() in p['email'].lower()]
+    anims = [a for a in animales if busqueda.lower() in a['nombre'].lower() or busqueda.lower() in a['raza'].lower()]
+    vets = [v for v in veterinarios if busqueda.lower() in v['nombre'].lower() or busqueda.lower() in v['apellidos'].lower() or busqueda.lower() in v['cargo'].lower()]
 
-    col_res1, col_res2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     
-    with col_res1:
-        st.markdown(f"#### 👤 Clientes ({len(props_encontrados)})")
-        if props_encontrados:
-            for p in props_encontrados:
-                with st.expander(f"{p['nombre']} - {p['telefono']}"):
-                    st.write(f"**Email:** {p['email']}")
-                    st.write(f"**Dirección:** {p['direccion']}")
-                    st.caption(f"ID Cliente: {p['id']}")
-        else:
-            st.caption("Sin coincidencias en clientes.")
+    # 1. CLIENTES ENCONTRADOS
+    with col1:
+        st.markdown(f"#### 👤 Clientes ({len(props)})")
+        if props:
+            for p in props:
+                with st.expander(f"{p['nombre']}"):
+                    st.write(f"📱 **Tlf:** {p['telefono']}")
+                    st.write(f"📧 **Email:** {p['email']}")
+                    st.caption(f"ID: {p['id']}")
+        else: st.caption("Sin resultados.")
 
-    with col_res2:
-        st.markdown(f"#### 🐾 Pacientes ({len(anims_encontrados)})")
-        if anims_encontrados:
-            for a in anims_encontrados:
+    # 2. PACIENTES ENCONTRADOS
+    with col2:
+        st.markdown(f"#### 🐾 Pacientes ({len(anims)})")
+        if anims:
+            for a in anims:
                 with st.expander(f"{a['nombre']} ({a['especie']})"):
                     st.write(f"**Raza:** {a['raza']}")
                     st.write(f"**Edad:** {a['edad']} años")
-                    st.caption(f"Propiedad del ID: {a['propietario_id']}")
-        else:
-            st.caption("Sin coincidencias en pacientes.")
+                    st.caption(f"Dueño ID: {a['propietario_id']}")
+        else: st.caption("Sin resultados.")
+
+    # 3. VETERINARIOS ENCONTRADOS
+    with col3:
+        st.markdown(f"#### 👨‍⚕️ Equipo ({len(vets)})")
+        if vets:
+            for v in vets:
+                with st.expander(f"Dr. {v['nombre']} {v['apellidos']}"):
+                    st.write(f"📋 **Cargo:** {v['cargo']}")
+                    st.write(f"🕒 **Horario:** {v['horario']}")
+                    st.write(f"📞 {v['telefono']}")
+        else: st.caption("Sin resultados.")
             
-    st.markdown("---") # Separador si hay búsqueda
+    st.markdown("---")
 
 
 # 📊 DASHBOARD 
