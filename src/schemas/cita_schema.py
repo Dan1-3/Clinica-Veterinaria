@@ -20,4 +20,4 @@ class CitaRead(CitaBase):
     propietario_id: int
     veterinario_id: int
 
-    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM
+    model_config = ConfigDict(from_attributes=True) # Configuración para que se pueda trabajar con SQLAlchemy ORM 
